@@ -17,7 +17,7 @@ export default function AuthForm({
       <div className="auth__card">
         <span className="sticker" aria-hidden="true">É</span>
         <h1>{login ? 'Masuk' : 'Buat akun'}</h1>
-        <p>{login ? 'Masuk untuk melihat akunmu atau mengelola menu.' : 'Cukup email dan password. Tidak perlu akun untuk memesan.'}</p>
+        <p>{login ? 'Masuk ke dashboard admin untuk mengelola menu dan pesanan.' : 'Cukup email dan password. Tidak perlu akun untuk memesan.'}</p>
         <form action={run} className="form">
           {next && <input type="hidden" name="next" value={next} />}
           {state?.error && <div className="galat" role="alert">{state.error}</div>}
@@ -36,7 +36,7 @@ export default function AuthForm({
           </button>
         </form>
         <p className="auth__alt">
-          {login ? <>Belum punya akun? <Link href="/register">Buat akun</Link></> : <>Sudah punya akun? <Link href="/login">Masuk</Link></>}
+          {login ? 'Login ini khusus akun admin.' : <>Sudah punya akun? <Link href="/login">Masuk</Link></>}
         </p>
       </div>
     </div>

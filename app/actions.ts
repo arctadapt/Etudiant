@@ -19,8 +19,10 @@ export async function login(_: FormState, f: FormData): Promise<FormState> {
   // bcrypt.compare tetap dijalankan walau user tidak ada, agar waktu respons tidak membocorkan email terdaftar
   const ok = await bcrypt.compare(password, u?.password ?? '$2b$10$invalidinvalidinvalidinvalidinvalidinvalidinvalidinvalid.');
   if (!u || !ok) return { error: 'Email atau password salah.' };
+  if (u.role !== 'admin') return { error: 'Akun ini tidak memiliki akses admin.' };
   await createSession({ id: u.id, email, role: u.role });
-  redirect(u.role === 'admin' && !f.get('next') ? '/admin' : aman(f.get('next')));
+  const next = aman(f.get('next'));
+  redirect(next === '/' ? '/admin' : next);
 }
 
 export async function register(_: FormState, f: FormData): Promise<FormState> {
@@ -83,6 +85,6 @@ export async function placeOrder(_: FormState, f: FormData): Promise<FormState> 
     `Halo Étudiant, saya mau pesan (#${id}):\n${baris.map((b) => '- ' + b).join('\n')}\nTotal: ${rupiah(total)}\n\n` +
     `Nama: ${nama}\nTelepon: ${no_telp}\nAlamat: ${alamat}\nWaktu: ${new Date(tanggal + 'Z').toLocaleString('id-ID', { dateStyle: 'full', timeStyle: 'short', timeZone: 'UTC' })} WIB` +
     (catatan ? `\nCatatan: ${catatan}` : '');
-  const wa = process.env.WA_NUMBER || '62882001743703';
+  const wa = process.env.WA_NUMBER || '6283829953377';
   return { id, total, waUrl: `https://wa.me/${wa}?text=${encodeURIComponent(teks)}` };
 }
