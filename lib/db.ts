@@ -1,10 +1,15 @@
 import { Pool } from 'pg';
 
 const g = globalThis as unknown as { pool?: Pool };
+const connectionString = process.env.DATABASE_URL;
+
+if (!connectionString) {
+  throw new Error('DATABASE_URL is not configured. Connect the Neon integration to this project.');
+}
 
 // satu pool per instance; max kecil karena tiap request serverless punya instance sendiri
 export const pool =
-  g.pool ?? (g.pool = new Pool({ connectionString: process.env.DATABASE_URL, max: 3 }));
+  g.pool ?? (g.pool = new Pool({ connectionString, max: 3 }));
 
 export type Menu = { id: number; nama: string; keterangan: string; harga: number; habis: boolean; gambar: string };
 export type Pesanan = {
