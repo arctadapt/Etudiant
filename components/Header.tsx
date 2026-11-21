@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { getSession } from '@/lib/session';
 import { logout } from '@/app/actions';
 import { CartButton } from './Cart';
+import SiteNav from './SiteNav';
 
 export default async function Header() {
   const s = await getSession();
@@ -9,11 +10,7 @@ export default async function Header() {
     <header className="header">
       <div className="wrap header__in">
         <Link href="/" className="logo">Étudiant</Link>
-        <nav className="nav" aria-label="Utama">
-          <Link href="/#menu">Menu</Link>
-          <Link href="/#cara-pesan">Cara pesan</Link>
-          <Link href="/#kontak">Kontak</Link>
-        </nav>
+        <SiteNav />
         <div className="header__aksi">
           {s ? (
             <div className="header__user">
@@ -22,7 +19,7 @@ export default async function Header() {
               <form action={logout}><button>Keluar</button></form>
             </div>
           ) : (
-            <Link href="/login" className="btn btn--ghost btn--small">Masuk</Link>
+            <Link href="/login" className="btn btn--ghost btn--small">Masuk Admin</Link>
           )}
           <CartButton />
         </div>

@@ -15,7 +15,7 @@ export default function Footer() {
           </div>
           <div>
             <h3>Hubungi kami</h3>
-            <p><a href="tel:+6289684828821">(+62) 896-8482-8821</a></p>
+            <p><a href="tel:+6283829953377">+62 838-2995-3377</a></p>
             <p><a href="mailto:etudiantsmkp1@gmail.com">etudiantsmkp1@gmail.com</a></p>
           </div>
         </div>
