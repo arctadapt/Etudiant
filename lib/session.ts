@@ -21,8 +21,13 @@ export async function verify(token?: string): Promise<Session | null> {
 
 export async function createSession(s: Session) {
   const token = await new SignJWT({ ...s }).setProtectedHeader({ alg: 'HS256' }).setExpirationTime('7d').sign(secret());
+  const development = process.env.NODE_ENV === 'development';
   (await cookies()).set('session', token, {
-    httpOnly: true, sameSite: 'lax', secure: process.env.NODE_ENV === 'production', path: '/', maxAge: 7 * 86400,
+    httpOnly: true,
+    sameSite: development ? 'none' : 'lax',
+    secure: development || process.env.NODE_ENV === 'production',
+    path: '/',
+    maxAge: 7 * 86400,
   });
 }
 
