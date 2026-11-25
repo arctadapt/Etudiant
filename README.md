@@ -1,35 +1,58 @@
 # Étudiant
 
-Toko jajanan online buatan siswa SMK Bandung. Next.js 15 (App Router) + Postgres + Vercel Blob.
+Étudiant adalah toko jajanan online buatan siswa SMK di Bandung. Aplikasi ini menggabungkan katalog, keranjang belanja, pencatatan pesanan, dan pengelolaan menu dalam satu website.
 
-- Pelanggan: lihat menu, keranjang (tersimpan di browser), checkout, pesanan tercatat lalu dikirim ke WhatsApp.
-- Admin (`/admin`): kelola menu (foto, harga, status habis) dan lihat/hapus pesanan.
-- Akun: daftar dan masuk dengan email + password (bcrypt, cookie sesi bertanda tangan, 7 hari).
+Demo: https://etudiant-ux.vercel.app
 
-## Deploy ke Vercel
+## Fitur
 
-1. **Database.** Di dashboard Vercel: *Storage* → buat Postgres (Neon). Salin `DATABASE_URL` ke Environment Variables project.
-2. **Blob.** *Storage* → buat Blob store dan hubungkan ke project (variabel `BLOB_READ_WRITE_TOKEN` terisi otomatis).
-3. **Environment Variables:** `DATABASE_URL`, `SESSION_SECRET` (`openssl rand -base64 32`), `WA_NUMBER` (mis. `6283829953377`).
-4. **Inisialisasi database sekali saja** dari komputermu (membuat tabel, 8 menu contoh, dan akun admin):
-   ```bash
-   npm install
-   DATABASE_URL="<url dari Neon>" ADMIN_EMAIL="kamu@email.com" ADMIN_PASSWORD="password-kuat" npm run db:init
-   ```
-5. Push ke GitHub, import repo di Vercel, lalu deploy. Framework terdeteksi otomatis.
+- Pelanggan dapat melihat menu, memasukkan produk ke keranjang, dan melakukan checkout.
+- Pesanan disimpan ke database dengan total harga yang dihitung kembali di server. Pelanggan kemudian mengirim rincian pesanan melalui WhatsApp secara manual.
+- Pengguna dapat mendaftar dan masuk dengan email dan password.
+- Admin dapat menambah, mengubah, atau menghapus menu, mengunggah foto produk, menandai stok habis, serta melihat dan menghapus pesanan.
 
-## Jalan di lokal
+## Teknologi
 
-```bash
-cp .env.example .env.local   # isi DATABASE_URL dan SESSION_SECRET
-npm install
-npm run db:init              # lihat langkah 4 di atas untuk ADMIN_EMAIL / ADMIN_PASSWORD
+Next.js 15 (App Router dan Server Actions), React 19, TypeScript, PostgreSQL, Vercel Blob, bcryptjs, dan jose. Aplikasi di-deploy melalui Vercel.
+
+## Menjalankan secara lokal
+
+Instal Node.js yang kompatibel dengan Next.js 15 dan siapkan database PostgreSQL terpisah untuk pengembangan.
+
+```sh
+npm ci
 npm run dev
 ```
 
-Tanpa `BLOB_READ_WRITE_TOKEN`, foto yang diunggah di lokal disimpan di `public/uploads` (hanya untuk development).
+Buka http://localhost:3000 setelah database dan konfigurasi aplikasi disiapkan.
 
-## Catatan
+## Konfigurasi
 
-- Harga pesanan selalu dihitung ulang di server dari database, bukan dari browser.
-- Belum ada pembatasan percobaan login (rate limit). Tambahkan sebelum dipakai untuk data sungguhan.
+Buat file `.env.local` untuk konfigurasi aplikasi atau gunakan Environment Variables di Vercel.
+
+| Variabel | Kegunaan |
+| --- | --- |
+| `DATABASE_URL` | Koneksi PostgreSQL |
+| `SESSION_SECRET` | Rahasia penandatanganan sesi |
+| `WA_NUMBER` | Nomor WhatsApp toko dalam format internasional |
+| `BLOB_READ_WRITE_TOKEN` | Penyimpanan gambar menu di Vercel Blob |
+
+Untuk inisialisasi database, sediakan `DATABASE_URL`, `ADMIN_EMAIL` dan `ADMIN_PASSWORD` melalui environment proses shell, lalu jalankan `npm run db:init`. Script ini membuat skema, mengisi menu contoh, dan membuat atau memperbarui akun admin. Gunakan database pengembangan dan jangan menjalankan script pada database produksi tanpa peninjauan.
+
+Tanpa Vercel Blob, gambar yang diunggah saat pengembangan lokal disimpan di `public/uploads`. Deployment Vercel membutuhkan Blob yang terhubung.
+
+## Struktur
+
+- `app/`: katalog, checkout, autentikasi, dashboard admin, dan Server Actions.
+- `components/`: antarmuka pelanggan dan admin.
+- `lib/`: database, sesi, pengunggahan gambar, dan pemformatan.
+- `db/schema.sql`: skema database.
+- `scripts/init-db.mjs`: inisialisasi database.
+
+## Deployment dan catatan
+
+Hubungkan repositori ke Vercel, siapkan PostgreSQL dan Blob, isi environment variables, lalu deploy. Build lokal tersedia melalui `npm run build`.
+
+Password di-hash dengan bcrypt dan sesi menggunakan token bertanda tangan. Jangan menyertakan kredensial atau data pelanggan dalam repositori. Sebelum penggunaan operasional, verifikasi pembatasan percobaan login, otorisasi admin, validasi unggahan, dan perlindungan data pesanan. Checkout bukan integrasi pembayaran otomatis; konfirmasi pesanan tetap melalui WhatsApp.
+
+Pembaruan dokumentasi ini berdasarkan peninjauan kode, bukan hasil pengujian menyeluruh.
